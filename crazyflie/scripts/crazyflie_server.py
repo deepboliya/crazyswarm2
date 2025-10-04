@@ -27,7 +27,7 @@ from crazyflie_interfaces.srv import Takeoff, Land, GoTo, RemoveLogging, AddLogg
 from crazyflie_interfaces.srv import UploadTrajectory, StartTrajectory, NotifySetpointsStop
 from crazyflie_interfaces.srv import Arm
 from rcl_interfaces.msg import ParameterDescriptor, SetParametersResult, ParameterType
-from crazyflie_interfaces.msg import Position, Status, Hover, LogDataGeneric, FullState
+from crazyflie_interfaces.msg import Position, Status, Hover, LogDataGeneric, FullState, WorldVelocity
 from motion_capture_tracking_interfaces.msg import NamedPoseArray
 
 from std_srvs.srv import Empty
@@ -144,7 +144,7 @@ class CrazyflieServer(Node):
 
         # Check if parameter values needs to be uploaded and put on ROS 2 params
         self.swarm.query_all_values_on_connect = self._ros_parameters["firmware_params"]["query_all_values_on_connect"]
-
+        
         # Initialize logging, services and parameters for each crazyflie
         for link_uri in self.uris:
 
@@ -291,6 +291,7 @@ class CrazyflieServer(Node):
                 Empty, name +
                 "/emergency", partial(self._emergency_callback, uri=uri)
             )
+
             self.create_service(
                 Arm, name +
                 "/arm", partial(self._arm_callback, uri=uri)
@@ -327,7 +328,12 @@ class CrazyflieServer(Node):
             )
             self.create_subscription(
                 Position, name +
-                "/cmd_position", partial(self._cmd_position_changed, uri=uri), 10
+                "/cmd_position", partial(self._cmd_position_changed, uri=uri), 1, qos_profile=QoSProfile(reliability=QoSReliabilityPolicy.BEST_EFFORT, history=QoSHistoryPolicy.KEEP_LAST, depth=1)
+            )
+
+            self.create_subscription(
+                WorldVelocity, name +
+                "/cmd_world_velocity", partial(self._cmd_world_velocity_changed, uri=uri), 1, qos_profile=QoSProfile(reliability=QoSReliabilityPolicy.BEST_EFFORT, history=QoSHistoryPolicy.KEEP_LAST, depth=1)
             )
 
             self.create_subscription(
@@ -922,7 +928,7 @@ class CrazyflieServer(Node):
             a certain height in high level commander
         """
 
-
+        self.get_logger().info(f"Takeoff request received for {self.cf_dict[uri]}")
         duration = float(request.duration.sec) + \
             float(request.duration.nanosec / 1e9)
         self.get_logger().info(
@@ -947,6 +953,7 @@ class CrazyflieServer(Node):
         Service callback to make the crazyflie land to
             a certain height in high level commander
         """
+        self.get_logger().info(f"Land request received for {self.cf_dict[uri]}")
         duration = float(request.duration.sec) + \
             float(request.duration.nanosec / 1e9)
         self.get_logger().info(
@@ -1145,6 +1152,7 @@ class CrazyflieServer(Node):
         Topic update callback to control the position command
             of the crazyflie 
         """
+
         x = msg.x
         y = msg.y
         z = msg.z
@@ -1152,6 +1160,18 @@ class CrazyflieServer(Node):
         self.swarm._cfs[uri].cf.commander.send_position_setpoint(
             x, y, z, yaw)
 
+    def _cmd_world_velocity_changed(self, msg, uri=""):
+        """
+        Topic update callback to control the world velocity command
+            of the crazyflie
+        """
+        self.get_logger().info(f"[{self.cf_dict[uri]}] vx: {msg.vx}, vy: {msg.vy}, vz: {msg.vz}, yawrate: {msg.yawrate}")  
+        vx = float(msg.vx)
+        vy = float(msg.vy)
+        vz = float(msg.vz)
+        yawrate = float(msg.yawrate)
+        self.swarm._cfs[uri].cf.commander.send_velocity_world_setpoint(
+            vx, vy, vz, yawrate)        
     def _cmd_hover_changed(self, msg, uri=""):
         """
         Topic update callback to control the hover command
