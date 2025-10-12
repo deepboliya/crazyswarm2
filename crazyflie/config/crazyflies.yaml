@@ -4,37 +4,49 @@ fileversion: 3
 robots:
   cf1:
     enabled: false
-    uri: radio://0/80/2M/E7E7E7E700
+    uri: radio://0/80/2M/E7E7E7E701
     initial_position: [0.0, 0.0, 0.0]
     type: cf21  # see robot_types
-    # firmware_params:
-    #   kalman:
-    #     pNAcc_xy: 1.0 # default 0.5
-    # firmware_logging:
-    #   enabled: true
-    #   custom_topics:
-    #     topic_name3: 
-    #       frequency: 1
-    #       vars: ["acc.x", "acc.y"]
-    # reference_frame: "odom_cf231" # use a custom reference frame if no global coordinate system is available
-
   cf2:
-    enabled: true
+    enabled: false
+    uri: radio://0/80/2M/E7E7E7E702
+    initial_position: [0.0, 0.0, 0.0]
+    type: cf21  # see robot_types
+  cf3:
+    enabled: false
+    uri: radio://0/80/2M/E7E7E7E703
+    initial_position: [0.0, 0.0, 0.0]
+    type: cf21  # see robot_types
+  cf4:
+    enabled: false
     uri: radio://0/80/2M/E7E7E7E704
     initial_position: [0.0, 0.0, 0.0]
     type: cf21  # see robot_types
-    # firmware_params:
-    #   kalman:
-    #     pNAcc_xy: 1.0 # default 0.5
-    #firmware_logging:
-    #  custom_topics:
-    #    topic_name3: 
-    #      frequency: 1
-    #      vars: ["acc.x", "acc.y", "acc.z"]
-    # reference_frame: "odom_cf5" 
-  cf3:
+  cf5:
     enabled: false
+    uri: radio://0/80/2M/E7E7E7E705
+    initial_position: [0.0, 0.0, 0.0]
+    type: cf21  # see robot_types
+  cf7:
+    enabled: true
     uri: radio://0/80/2M/E7E7E7E707
+    initial_position: [0.0, 0.0, 0.0]
+    type: cf21  # see robot_types
+  cf51:
+    enabled: false
+    uri: radio://0/80/2M/E7E7E7E751
+    initial_position: [0.0, 0.0, 0.0]
+    type: cf21  # see robot_types
+  cf52:
+    enabled: false
+    uri: radio://0/80/2M/E7E7E7E752
+    initial_position: [0.0, 0.0, 0.0]
+    type: cf21  # see robot_types
+
+
+  cf999:
+    enabled: false
+    uri: radio://0/80/2M/E7E7E7E751
     initial_position: [0.0, 0.0, 0.0]
     type: cf21  # see robot_types
     # firmware_params:
@@ -46,6 +58,7 @@ robots:
     #      frequency: 1
     #      vars: ["acc.x", "acc.y", "acc.z"]
     # reference_frame: "odom_cf5" 
+
 # Definition of the various robot types
 robot_types:
   cf21:
@@ -57,7 +70,7 @@ robot_types:
     big_quad: false
     battery:
       voltage_warning: 3.8  # V
-      voltage_critical: 3.7 # V
+      voltage_critical: 3.6 # V
     # firmware_params:
     #   kalman:
     #     pNAcc_xy: 1.0 # default 0.5

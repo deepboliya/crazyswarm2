@@ -328,12 +328,12 @@ class CrazyflieServer(Node):
             )
             self.create_subscription(
                 Position, name +
-                "/cmd_position", partial(self._cmd_position_changed, uri=uri), 1, qos_profile=QoSProfile(reliability=QoSReliabilityPolicy.BEST_EFFORT, history=QoSHistoryPolicy.KEEP_LAST, depth=1)
+                "/cmd_position", partial(self._cmd_position_changed, uri=uri),  qos_profile=QoSProfile(reliability=QoSReliabilityPolicy.BEST_EFFORT, history=QoSHistoryPolicy.KEEP_LAST, depth=1)
             )
 
             self.create_subscription(
                 WorldVelocity, name +
-                "/cmd_world_velocity", partial(self._cmd_world_velocity_changed, uri=uri), 1, qos_profile=QoSProfile(reliability=QoSReliabilityPolicy.BEST_EFFORT, history=QoSHistoryPolicy.KEEP_LAST, depth=1)
+                "/cmd_world_velocity", partial(self._cmd_world_velocity_changed, uri=uri),  qos_profile=QoSProfile(reliability=QoSReliabilityPolicy.BEST_EFFORT, history=QoSHistoryPolicy.KEEP_LAST, depth=1)
             )
 
             self.create_subscription(
@@ -927,7 +927,7 @@ class CrazyflieServer(Node):
         Service callback to take the crazyflie land to
             a certain height in high level commander
         """
-
+        
         self.get_logger().info(f"Takeoff request received for {self.cf_dict[uri]}")
         duration = float(request.duration.sec) + \
             float(request.duration.nanosec / 1e9)
